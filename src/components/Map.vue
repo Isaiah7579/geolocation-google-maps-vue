@@ -1,5 +1,10 @@
 <template>
     <div>
+        <div>
+            <p><input type="file"  accept="image/*" name="image" id="file" @input="loadFile" style="display: none;"></p>
+            <p><label for="file" style="cursor: pointer;">Upload Image</label></p>
+            <p><img id="output" @click='imageClicked' width="200" /></p>
+        </div>
         <div style="max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between">
             <div>
                 <h1>Your coordinates:</h1>
@@ -8,6 +13,10 @@
             <div>
                 <h1>Map coordinates:</h1>
                 <p>{{ mapCoordinates.lat }} Latitude, {{ mapCoordinates.lng }} Longitude</p>
+            </div>
+            <div>
+                <h1>Photo coordinates:</h1>
+                <p>{{ photoCoordinates.lat }} Latitude, {{ photoCoordinates.lng }} Longitude</p>
             </div>
         </div>
         <GmapMap
@@ -19,12 +28,21 @@
         ></GmapMap>
     </div>
 </template>
+
+
 <script>
+    //Import EXIF script
+    var EXIF = require('exif-js');
+
     export default {
         data() {
             return {
                 map: null,
                 myCoordinates: {
+                    lat: 0,
+                    lng: 0
+                },
+                photoCoordinates: {
                     lat: 0,
                     lng: 0
                 },
@@ -64,6 +82,30 @@
 
                 localStorage.center = JSON.stringify(center);
                 localStorage.zoom = zoom;
+            },
+            onInput(e) {
+                this.file_path = document.querySelector('myFile')
+                console.log(this.file_path)
+            } ,
+            loadFile(e) {
+                var image = document.getElementById('output');
+                image.src = URL.createObjectURL(e.target.files[0]);
+            },
+            imageClicked(e) {
+                // Retrieve coordinates from the EXIF data when the image is clicked
+                let image = document.getElementById('output')
+                EXIF.getData(image, function() {
+                let myData = this;
+                console.log(myData.exifdata);
+                console.log("here4")
+                let lat_data = myData.exifdata.GPSLatitude
+                let long_data = myData.exifdata.GPSLongitude
+                console.dir(this.photoCoordinates)
+                this.photoCoordinates.lat = lat_data[0].numerator +lat_data[1].numerator/60 + lat_data[2]/3600;
+                console.log(this.photoCoordinates.lat)
+                this.photoCoordinates.lng = long_data[0].numerator +long_data[1].numerator/60 + long_data[2]/3600;
+                console.log(this.photoCoordinates.long)
+                });
             }
         },
         computed: {
