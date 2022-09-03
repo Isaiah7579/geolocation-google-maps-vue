@@ -100,11 +100,16 @@
                 console.log("here4")
                 let lat_data = myData.exifdata.GPSLatitude
                 let long_data = myData.exifdata.GPSLongitude
-                console.dir(this.photoCoordinates)
-                this.photoCoordinates.lat = lat_data[0].numerator +lat_data[1].numerator/60 + lat_data[2]/3600;
-                console.log(this.photoCoordinates.lat)
-                this.photoCoordinates.lng = long_data[0].numerator +long_data[1].numerator/60 + long_data[2]/3600;
-                console.log(this.photoCoordinates.long)
+
+                let photoCoordinates = {
+                    lat: 0,
+                    lng: 0
+                }
+
+                photoCoordinates.lat = lat_data[0].numerator +lat_data[1].numerator/60 + lat_data[2]/3600;
+                console.log(photoCoordinates.lat)
+                photoCoordinates.lng = long_data[0].numerator +long_data[1].numerator/60 + long_data[2]/3600;
+                console.log(photoCoordinates.lng)
                 });
             }
         },
